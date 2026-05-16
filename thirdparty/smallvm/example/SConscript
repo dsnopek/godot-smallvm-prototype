@@ -1,0 +1,55 @@
+# SConscript for the MicroBlocks VM example host application.
+#
+# Builds ./vm_embed from embed_main.cpp + embed_platform.c + custom_prims.c,
+# linking against the static VM library produced by ../SConscript.
+#
+# This is the SCons equivalent of the old build.sh; run from the top-level
+# SConstruct via the "example" alias, e.g.:
+#
+#     scons example
+#
+
+Import("env", "smallvm_lib", "smallvm_cppflags")
+
+ex_env = env.Clone()
+
+# Inherit the VM's header path and defines (CPPPATH, CPPDEFINES). The 32-bit
+# arch flags are already in env from godot-cpp's x86_32 configuration.
+ex_env.Append(**smallvm_cppflags)
+ex_env.Append(CCFLAGS=[
+    "-Wno-unused-result",
+    "-Wno-unused-but-set-variable",
+])
+
+# C and C++ sources have different language standards; compile separately so
+# the C++ host doesn't get -std=c99 forced on it. The -Wno-…-cast warnings
+# only make sense for C (g++ rejects them) so they go on CFLAGS too.
+c_env = ex_env.Clone()
+c_env.Append(CFLAGS=[
+    "-std=c99",
+    "-Wno-pointer-to-int-cast",
+    "-Wno-int-to-pointer-cast",
+])
+
+# CXX std is already set by godot-cpp's common_compiler_flags (-std=c++17).
+
+c_objs = [
+    c_env.Object("build/embed_platform", "embed_platform.c"),
+    c_env.Object("build/custom_prims", "custom_prims.c"),
+]
+cpp_objs = [
+    ex_env.Object("build/embed_main", "embed_main.cpp"),
+]
+
+vm_embed = ex_env.Program(
+    target="vm_embed",
+    source=c_objs + cpp_objs + [smallvm_lib],
+    LIBS=["pthread"],
+)
+
+Default(vm_embed)
+
+# Convenience alias: `scons example` builds just the example app.
+Alias("example", vm_embed)
+
+Return("vm_embed")

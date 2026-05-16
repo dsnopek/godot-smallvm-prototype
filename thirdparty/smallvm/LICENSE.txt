@@ -1,0 +1,15 @@
+The MicroBlocks ("SmallVM") source under thirdparty/smallvm/ is vendored
+from the upstream project at:
+
+    https://bitbucket.org/john_maloney/smallvm
+
+Copyright 2018 John Maloney, Bernat Romagosa, and Jens Mönig.
+
+It is distributed under the Mozilla Public License, Version 2.0. The
+notice that ships with the upstream repository follows verbatim:
+
+----------------------------------------------------------------------
+
+This Source Code Form is subject to the terms of the Mozilla Public
+License, v. 2.0. If a copy of the MPL was not distributed with this
+file, You can obtain one at http://mozilla.org/MPL/2.0/.

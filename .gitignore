@@ -29,6 +29,7 @@ compile_commands.json
 /src/gen
 
 # Binaries
+*.a
 *.o
 *.os
 *.so
@@ -60,3 +61,11 @@ compile_commands.json
 # Cmake
 cmake-build*
 CMakeUserPresets.json
+
+# Ignore example CLI, its intermediate build dir, and the persistent code
+# store it writes while an IDE is attached. All of these are regenerated.
+/thirdparty/smallvm/example/vm_embed
+/thirdparty/smallvm/example/build/
+/thirdparty/smallvm/example/*.ubcode
+/thirdparty/smallvm/example/ublockscode.bin
+

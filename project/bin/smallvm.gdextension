@@ -1,0 +1,16 @@
+[configuration]
+
+entry_symbol = "godot_smallvm_init"
+compatibility_minimum = "4.1"
+reloadable = false
+
+[libraries]
+
+windows.debug.x86_32 = "./windows/smallvm.windows.template_debug.x86_32.dll"
+windows.release.x86_32 = "./windows/smallvm.windows.template_release.x86_32.dll"
+
+linux.debug.x86_32 = "./linux/libsmallvm.linux.template_debug.x86_32.so"
+linux.release.x86_32 = "./linux/libsmallvm.linux.template_release.x86_32.so"
+
+web.debug.nothreads.wasm32 = "./web/libsmallvm.web.template_debug.wasm32.nothreads.wasm"
+web.release.nothreads.wasm32 = "./web/libsmallvm.web.template_release.wasm32.nothreads.wasm"

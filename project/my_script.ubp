@@ -1,0 +1,30 @@
+module main
+author unknown
+version 1 0 
+description ''
+
+script 397 126 {
+whenStarted
+'[ble:greet]' 'World'
+'[ble:moveBy]' 5 0
+}
+
+
+module 'Host Blocks' Output
+author 'Your Project'
+version 1 0 
+description 'Blocks exposed by the embedding C++ host. These call into
+custom primitives defined in custom_prims.c. The primitive set name in
+each spec ("ble") is the IDE-side name of the slot the host registered
+into; the function name ("greet", "add", "square") matches an entry in
+the C-side PrimEntry table.'
+
+  spec ' ' '[ble:greet]' 'greet _' 'str' 'World'
+  spec 'r' '[ble:add]' 'add _ + _' 'num num' 3 4
+  spec 'r' '[ble:square]' 'square of _' 'num' 5
+  space
+  spec ' ' '[ble:setX]' 'set x to _' 'num' 0
+  spec ' ' '[ble:setY]' 'set y to _' 'num' 0
+  spec ' ' '[ble:moveBy]' 'move by _ , _' 'num num' 5 0
+  spec 'r' '[ble:getX]' 'x'
+  spec 'r' '[ble:getY]' 'y'

@@ -1,0 +1,65 @@
+# SConscript for the MicroBlocks VM static library.
+#
+# Builds libsmallvm.a from the C sources in src/. The library is consumed by:
+#   - thirdparty/smallvm/example/SConscript (the standalone vm_embed binary)
+#   - the parent SConstruct (the Godot GDExtension shared library)
+#
+# Architecture: the VM's object representation is 32-bit only (see
+# mem.c::memInit, which panics if sizeof(int*) != 4). The parent SConstruct
+# is responsible for enforcing arch=x86_32; we just assume the env we get
+# already has -m32 / -march=i686 applied (godot-cpp's linux.py does this
+# when env["arch"] == "x86_32").
+#
+# Returns:
+#   smallvm_lib      - the static-library Node, suitable for `source=[...]`
+#   smallvm_cppflags - a dict the consumer can splat into its own env to
+#                      compile against the VM's headers (CPPPATH, CPPDEFINES).
+
+Import("env")
+
+vm_env = env.Clone()
+
+# Tell the VM we're in the "GNU-host, no Arduino, no Emscripten" build mode.
+# This is the same define linux+pi/buildVMLinux.sh uses upstream.
+vm_env.Append(CPPDEFINES=["GNUBLOCKS"])
+vm_env.Append(CPPPATH=[Dir("src")])
+
+# The VM is old, embedded-style C. Quiet the warnings that come with the
+# 32-bit-ptr idioms and intentional unused statics, so a clean build is
+# actually quiet.
+vm_env.Append(CFLAGS=[
+    "-std=c99",
+    "-Wno-pointer-to-int-cast",
+    "-Wno-int-to-pointer-cast",
+])
+vm_env.Append(CCFLAGS=[
+    "-Wno-unused-result",
+    "-Wno-unused-but-set-variable",
+    "-Wno-unused-function",
+    "-Wno-format",
+    "-Wno-comment",
+])
+
+vm_sources = [
+    "src/interp.c",
+    "src/runtime.c",
+    "src/mem.c",
+    "src/persist.c",
+    "src/varPrims.c",
+    "src/dataPrims.c",
+    "src/miscPrims.c",
+    "src/mbFont.c",
+    "src/tinyJSON.c",
+]
+
+smallvm_lib = vm_env.StaticLibrary("smallvm", source=vm_sources)
+
+# What a consumer needs in its own Environment to compile code that calls
+# into the VM. Compile/link arch flags (-m32, -march=i686) are NOT in here
+# because they're already in the env godot-cpp produced for x86_32.
+smallvm_cppflags = {
+    "CPPPATH": [Dir("src").abspath],
+    "CPPDEFINES": ["GNUBLOCKS"],
+}
+
+Return("smallvm_lib smallvm_cppflags")
