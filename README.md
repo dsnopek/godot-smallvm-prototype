@@ -45,7 +45,7 @@ edit against the standalone host, then ship the persisted bytecode.
 
 1. Run the standalone host pointed at the code file you want to fill:
    ```sh
-   ./thirdparty/smallvm/example/vm_embed my_script.ubcode
+   ./thirdparty/smallvm/example/vm_embed project/my_script.ubcode
    ```
    It prints a `/dev/pts/N` path on startup.
 2. In the MicroBlocks IDE, **Connect → Open serial port** and paste that
